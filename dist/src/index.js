@@ -523,9 +523,7 @@ class ServerlessCustomDomain {
                 }
                 if (typeof apiId === "object" && apiId.Ref) {
                     try {
-                        const returnVal = yield this.cloudFormationWrapper.getApiId(domain, stackName, apiId.Ref);
-                        globals_1.default.logInfo(`returnVal ${returnVal}.`);
-                        throw new Error(`Succeed!`);
+                        return yield this.cloudFormationWrapper.getApiId(domain, stackName, apiId.Ref);
                     }
                     catch (err) {
                         globals_1.default.logError(err, domain.givenDomainName);

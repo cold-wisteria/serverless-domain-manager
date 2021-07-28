@@ -552,9 +552,7 @@ class ServerlessCustomDomain {
 
             if (typeof apiId === "object" && apiId.Ref) {
                 try {
-                    const returnVal = await this.cloudFormationWrapper.getApiId(domain, stackName, apiId.Ref);
-                    Globals.logInfo(`returnVal ${returnVal}.`);
-                    throw new Error(`Succeed!`);
+                    return await this.cloudFormationWrapper.getApiId(domain, stackName, apiId.Ref);
                 } catch (err) {
                     Globals.logError(err, domain.givenDomainName);
                     throw new Error(`Failed to find CloudFormation resources for ${domain.givenDomainName}\n`);
