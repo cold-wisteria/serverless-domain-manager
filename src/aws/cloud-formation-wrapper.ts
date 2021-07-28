@@ -17,22 +17,24 @@ class CloudFormationWrapper {
     /**
      * Gets rest API id from CloudFormation stack or nested stack
      */
-    public async getApiId(domain: DomainConfig, stackName: string): Promise<string> {
-        let logicalResourceId = "ApiGatewayRestApi";
+    public async getApiId(domain: DomainConfig, stackName: string, logicalResourceId?: string): Promise<string> {
+        let _logicalResourceId = "ApiGatewayRestApi";
         if (domain.apiType === Globals.apiTypes.http) {
-            logicalResourceId = "HttpApi";
+            _logicalResourceId = "HttpApi";
         }
         if (domain.apiType === Globals.apiTypes.websocket) {
-            logicalResourceId = "WebsocketsApi";
+            _logicalResourceId = "WebsocketsApi";
         }
+
+        _logicalResourceId = logicalResourceId ?? _logicalResourceId
 
         let response;
         try {
             // trying to get information for specified stack name
-            response = await this.getStack(logicalResourceId, stackName);
+            response = await this.getStack(_logicalResourceId, stackName);
         } catch {
             // in case error trying to get information from the some of nested stacks
-            response = await this.getNestedStack(logicalResourceId, stackName);
+            response = await this.getNestedStack(_logicalResourceId, stackName);
         }
 
         if (!response) {

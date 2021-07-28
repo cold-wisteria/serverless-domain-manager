@@ -21,23 +21,24 @@ class CloudFormationWrapper {
     /**
      * Gets rest API id from CloudFormation stack or nested stack
      */
-    getApiId(domain, stackName) {
+    getApiId(domain, stackName, logicalResourceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let logicalResourceId = "ApiGatewayRestApi";
+            let _logicalResourceId = "ApiGatewayRestApi";
             if (domain.apiType === globals_1.default.apiTypes.http) {
-                logicalResourceId = "HttpApi";
+                _logicalResourceId = "HttpApi";
             }
             if (domain.apiType === globals_1.default.apiTypes.websocket) {
-                logicalResourceId = "WebsocketsApi";
+                _logicalResourceId = "WebsocketsApi";
             }
+            _logicalResourceId = logicalResourceId !== null && logicalResourceId !== void 0 ? logicalResourceId : _logicalResourceId;
             let response;
             try {
                 // trying to get information for specified stack name
-                response = yield this.getStack(logicalResourceId, stackName);
+                response = yield this.getStack(_logicalResourceId, stackName);
             }
             catch (_a) {
                 // in case error trying to get information from the some of nested stacks
-                response = yield this.getNestedStack(logicalResourceId, stackName);
+                response = yield this.getNestedStack(_logicalResourceId, stackName);
             }
             if (!response) {
                 throw new Error(`Failed to find a stack ${stackName}\n`);

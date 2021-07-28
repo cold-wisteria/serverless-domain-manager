@@ -497,6 +497,8 @@ class ServerlessCustomDomain {
             const apiGateway = this.serverless.service.provider.apiGateway || {};
             const apiIdKey = globals_1.default.gatewayAPIIdKeys[domain.apiType];
             const apiId = apiGateway[apiIdKey];
+            const stackName = this.serverless.service.provider.stackName ||
+                `${this.serverless.service.service}-${domain.stage}`;
             if (apiId) {
                 // if string value exists return the value
                 if (typeof apiId === "string") {
@@ -519,11 +521,20 @@ class ServerlessCustomDomain {
                     }
                     return importValues[importName];
                 }
+                if (typeof apiId === "object" && apiId.Ref) {
+                    try {
+                        const returnVal = yield this.cloudFormationWrapper.getApiId(domain, stackName, apiId.Ref);
+                        globals_1.default.logInfo(`returnVal ${returnVal}.`);
+                        throw new Error(`Succeed!`);
+                    }
+                    catch (err) {
+                        globals_1.default.logError(err, domain.givenDomainName);
+                        throw new Error(`Failed to find CloudFormation resources for ${domain.givenDomainName}\n`);
+                    }
+                }
                 // throw an exception in case not supported restApiId
                 throw new Error("Unsupported apiGateway.restApiId object");
             }
-            const stackName = this.serverless.service.provider.stackName ||
-                `${this.serverless.service.service}-${domain.stage}`;
             try {
                 return yield this.cloudFormationWrapper.getApiId(domain, stackName);
             }
